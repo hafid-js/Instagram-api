@@ -6,10 +6,12 @@ import com.hafidtech.instagram.api.exceptions.UserException;
 import com.hafidtech.instagram.api.repository.UserRepository;
 import com.hafidtech.instagram.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -60,7 +62,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByUsername(String username) throws UserException {
-        return null;
+
+        Optional<User> opt = userRepository.findByUsername(username);
+
+        if(opt.isPresent()) {
+            return opt.get();
+        }
+
+        throw new UserException("user not exist with username :" + username);
     }
 
     @Override
@@ -169,6 +178,6 @@ public class UserServiceImpl implements UserService {
         if(updatedUser.getId().equals(existingUser.getId())) {
             return userRepository.save(existingUser);
         }
-        throw new UserException("ypu can't update this user");
+        throw new UserException("you can't update this user");
     }
 }
