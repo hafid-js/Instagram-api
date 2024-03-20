@@ -6,6 +6,7 @@ import com.hafidtech.instagram.api.exceptions.UserException;
 import com.hafidtech.instagram.api.repository.UserRepository;
 import com.hafidtech.instagram.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Override
     public User registerUser(User user) throws UserException {
@@ -37,12 +42,19 @@ public class UserServiceImpl implements UserService {
         User newUser = new User();
 
         newUser.setEmail(user.getEmail());
-        newUser.setPassword(user.getPassword());
         newUser.setUsername(user.getUsername());
         newUser.setName(user.getName());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+
 
         return userRepository.save(newUser);
     }
+
+
+
+//    public UserServiceImpl(PasswordEncoder passwordEncoder) {
+//        this.passwordEncoder = passwordEncoder;
+//    }
 
     @Override
     public User findUserById(Integer userId) throws UserException {
